@@ -1,0 +1,19 @@
+# General
+__pycache__/
+*.py[cod]
+*$py.class
+.DS_Store
+
+# Environments
+.env
+.venv/
+venv/
+env/
+
+# Flask
+instance/
+.webassets-cache
+
+# Database
+*.sqlite3
+*.db

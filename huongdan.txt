@@ -1,0 +1,20 @@
+Tạo venv 
+python -m venv .venv
+
+Kích hoạt venv
+source .venv/bin/activate
+
+Khởi tạo database 
+python init_db.py
+
+Chạy app
+python app.py
+
+1) truy cập vào trang đăng ký nếu chưa có tài khoản 
+localhost:8000/register
+
+2) đăng nhập
+localhost:8000/login
+
+3) trang chủ 
+localhost:8000/
