@@ -1,11 +1,375 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lịch sử - Hệ thống châm phân</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #fff;
+        }
+
+        .filter-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            color-scheme: dark;
+        }
+
+        .filter-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            color: white;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            opacity: 0.9;
+        }
+
+        .filter-btn.reset {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
 </head>
+
 <body>
-    
+    <div class="background-container"></div>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Menu</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('web_bp.home') }}" class="nav-item">
+                    <span>🏠</span> Trang chủ
+                </a>
+                <a href="{{ url_for('web_bp.data') }}" class="nav-item">
+                    <span>📊</span> Dữ liệu
+                </a>
+                <a href="{{ url_for('web_bp.history') }}" class="nav-item active">
+                    <span>⏰</span> Lịch sử
+                </a>
+                <a href="{{ url_for('web_bp.device') }}" class="nav-item">
+                    <span>⚙️</span> Thiết bị
+                </a>
+                <a href="{{ url_for('web_bp.contact') }}" class="nav-item">
+                    <span>📞</span> Liên hệ
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="{{ url_for('web_bp.login') }}" class="nav-item logout">
+                    <span>🚪</span> Đăng xuất
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="dashboard-container">
+                <header class="dashboard-header">
+                    <div>
+                        <h1>Lịch sử hoạt động</h1>
+                        <div class="filter-container">
+                            <div class="filter-group">
+                                <label>Từ:</label>
+                                <input type="datetime-local" id="startTime" class="filter-input">
+                            </div>
+                            <div class="filter-group">
+                                <label>Đến:</label>
+                                <input type="datetime-local" id="endTime" class="filter-input">
+                            </div>
+                            <button id="filterBtn" class="filter-btn">Lọc dữ liệu</button>
+                            <button id="resetBtn" class="filter-btn reset">Trực tiếp</button>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="charts-container">
+                    <!-- Flow Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">
+                                <span>🌊</span> Biểu đồ Lưu lượng
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="flowChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Pressure Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">
+                                <span>⏲️</span> Biểu đồ Áp suất
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="pressureChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- EC Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">
+                                <span>⚡</span> Biểu đồ EC
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="ecChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- pH Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">
+                                <span>🧪</span> Biểu đồ pH
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="phChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Chart Configuration Function
+            const createChart = (ctx, label, color, label2 = null, color2 = null) => {
+                const datasets = [{
+                    label: label,
+                    data: [],
+                    borderColor: color,
+                    backgroundColor: color.replace('1)', '0.2)'), // Add transparency
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 3
+                }];
+
+                if (label2) {
+                    datasets.push({
+                        label: label2,
+                        data: [],
+                        borderColor: color2,
+                        backgroundColor: color2.replace('1)', '0.2)'),
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 3
+                    });
+                }
+
+                return new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        plugins: {
+                            legend: {
+                                labels: { color: '#94a3b8' }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                ticks: { color: '#94a3b8' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: '#94a3b8', maxTicksLimit: 5 } // Limit visible timestamps
+                            }
+                        }
+                    }
+                });
+            };
+
+            // Initialize Charts
+            const flowChart = createChart(
+                document.getElementById('flowChart').getContext('2d'),
+                'Lưu lượng 1', 'rgba(56, 189, 248, 1)',
+                'Lưu lượng 2', 'rgba(129, 140, 248, 1)'
+            );
+            const pressureChart = createChart(document.getElementById('pressureChart').getContext('2d'), 'Áp suất', 'rgba(251, 146, 60, 1)');
+            const ecChart = createChart(document.getElementById('ecChart').getContext('2d'), 'EC', 'rgba(232, 121, 249, 1)');
+            const phChart = createChart(document.getElementById('phChart').getContext('2d'), 'pH', 'rgba(74, 222, 128, 1)');
+
+            // Fetch Data Function
+            let updateInterval;
+
+            const updateCharts = (start = null, end = null) => {
+                let url = '/api/history_data';
+                if (start && end) {
+                    url += `?start_time=${start.replace('T', ' ')}:00&end_time=${end.replace('T', ' ')}:59`;
+                }
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Helper to Format Time
+                        const formatTime = (isoString) => {
+                            const date = new Date(isoString);
+                            return date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                        };
+
+                        // Helper to specific date format for longer ranges if needed, but keeping simple for now
+                        // If range is large, time only might be confusing, but chartjs handles labels okay.
+
+                        // Update Flow Chart
+                        if (data.flow1 && data.flow2) {
+                            flowChart.data.labels = data.flow1.map(d => formatTime(d.time));
+                            flowChart.data.datasets[0].data = data.flow1.map(d => d.value);
+                            flowChart.data.datasets[1].data = data.flow2.map(d => d.value);
+                            flowChart.update();
+                        }
+
+                        // Update Pressure Chart
+                        if (data.pressure) {
+                            pressureChart.data.labels = data.pressure.map(d => formatTime(d.time));
+                            pressureChart.data.datasets[0].data = data.pressure.map(d => d.value);
+                            pressureChart.update();
+                        }
+
+                        // Update EC Chart
+                        if (data.ec) {
+                            ecChart.data.labels = data.ec.map(d => formatTime(d.time));
+                            ecChart.data.datasets[0].data = data.ec.map(d => d.value);
+                            ecChart.update();
+                        }
+
+                        // Update pH Chart
+                        if (data.ph) {
+                            phChart.data.labels = data.ph.map(d => formatTime(d.time));
+                            phChart.data.datasets[0].data = data.ph.map(d => d.value);
+                            phChart.update();
+                        }
+                    })
+                    .catch(err => console.error('Error fetching history:', err));
+            };
+
+            // Event Listeners
+            document.getElementById('filterBtn').addEventListener('click', () => {
+                const start = document.getElementById('startTime').value;
+                const end = document.getElementById('endTime').value;
+
+                if (start && end) {
+                    if (updateInterval) clearInterval(updateInterval);
+                    updateCharts(start, end);
+                } else {
+                    alert('Vui lòng chọn đầy đủ thời gian bắt đầu và kết thúc!');
+                }
+            });
+
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                document.getElementById('startTime').value = '';
+                document.getElementById('endTime').value = '';
+
+                if (updateInterval) clearInterval(updateInterval);
+                updateCharts(); // Load latest
+                updateInterval = setInterval(() => updateCharts(), 5000);
+            });
+
+            // Initial Load & Periodic Update
+            updateCharts();
+            updateInterval = setInterval(() => updateCharts(), 5000); // 5 seconds
+        });
+    </script>
 </body>
+
 </html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thiết bị - Hệ thống châm phân</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+    <style>
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding-bottom: 2rem;
+        }
+
+        .device-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .device-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        .device-image-placeholder {
+            height: 180px;
+            background: rgba(15, 23, 42, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .device-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .device-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .device-model {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 1rem;
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .device-specs {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .device-specs li {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .device-specs li:last-child {
+            border-bottom: none;
+        }
+
+        .device-specs li strong {
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-container"></div>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Menu</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('web_bp.home') }}" class="nav-item">
+                    <span>🏠</span> Trang chủ
+                </a>
+                <a href="{{ url_for('web_bp.data') }}" class="nav-item">
+                    <span>📊</span> Dữ liệu
+                </a>
+                <a href="{{ url_for('web_bp.history') }}" class="nav-item">
+                    <span>⏰</span> Lịch sử
+                </a>
+                <a href="{{ url_for('web_bp.device') }}" class="nav-item active">
+                    <span>⚙️</span> Thiết bị
+                </a>
+                <a href="{{ url_for('web_bp.contact') }}" class="nav-item">
+                    <span>📞</span> Liên hệ
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="{{ url_for('web_bp.login') }}" class="nav-item logout">
+                    <span>🚪</span> Đăng xuất
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="dashboard-container">
+                <header class="dashboard-header">
+                    <h1>Thông tin thiết bị</h1>
+                </header>
+
+                <div class="devices-grid">
+                    <!-- Controller -->
+                    <div class="device-card">
+                        <div class="device-image-placeholder">🖥️</div>
+                        <div class="device-content">
+                            <div class="device-title">Bộ điều khiển trung tâm</div>
+                            <div class="device-model">Model: IoT-GATEWAY-V2</div>
+                            <ul class="device-specs">
+                                <li><strong>Vi xử lý:</strong> Quad-core Cortex-A72</li>
+                                <li><strong>RAM:</strong> 4GB LPDDR4</li>
+                                <li><strong>Kết nối:</strong> WiFi Dual-band, LAN 1Gbps</li>
+                                <li><strong>Giao thức:</strong> RS485 / Modbus RTU</li>
+                                <li><strong>Nguồn điện:</strong> 5V DC / 3A</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Flow Sensor -->
+                    <div class="device-card">
+                        <div class="device-image-placeholder">🌊</div>
+                        <div class="device-content">
+                            <div class="device-title">Cảm biến lưu lượng</div>
+                            <div class="device-model">Model: FL-S201 Industrial</div>
+                            <ul class="device-specs">
+                                <li><strong>Dải đo:</strong> 1 - 60 L/phút</li>
+                                <li><strong>Độ chính xác:</strong> ±2%</li>
+                                <li><strong>Áp suất tối đa:</strong> 1.75 MPa</li>
+                                <li><strong>Tín hiệu:</strong> Xung (Pulse)</li>
+                                <li><strong>Chất liệu:</strong> Nhựa ABS cao cấp</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- EC/pH Sensor -->
+                    <div class="device-card">
+                        <div class="device-image-placeholder">🧪</div>
+                        <div class="device-content">
+                            <div class="device-title">Bộ cảm biến EC & pH</div>
+                            <div class="device-model">Model: EPH-PRO-X</div>
+                            <ul class="device-specs">
+                                <li><strong>Dải đo pH:</strong> 0.0 - 14.0 pH</li>
+                                <li><strong>Độ chính xác pH:</strong> ±0.1 pH</li>
+                                <li><strong>Dải đo EC:</strong> 0 - 20 mS/cm</li>
+                                <li><strong>Độ chính xác EC:</strong> ±2% F.S</li>
+                                <li><strong>Tự động bù nhiệt:</strong> Có (0-50°C)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Solenoid Valve -->
+                    <div class="device-card">
+                        <div class="device-image-placeholder">🚿</div>
+                        <div class="device-content">
+                            <div class="device-title">Van điện từ</div>
+                            <div class="device-model">Model: SV-21W</div>
+                            <ul class="device-specs">
+                                <li><strong>Điện áp:</strong> 24V DC</li>
+                                <li><strong>Kích thước:</strong> Phi 21 (1/2")</li>
+                                <li><strong>Áp suất làm việc:</strong> 0.02 - 0.8 MPa</li>
+                                <li><strong>Loại van:</strong> Thường đóng (NC)</li>
+                                <li><strong>Tuổi thọ:</strong> > 200.000 lần đóng/mở</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Pressure Sensor -->
+                    <div class="device-card">
+                        <div class="device-image-placeholder">⏲️</div>
+                        <div class="device-content">
+                            <div class="device-title">Cảm biến áp suất</div>
+                            <div class="device-model">Model: PRS-10BAR</div>
+                            <ul class="device-specs">
+                                <li><strong>Dải đo:</strong> 0 - 10 Bar</li>
+                                <li><strong>Tín hiệu ra:</strong> 4 - 20mA</li>
+                                <li><strong>Nhiệt độ hoạt động:</strong> -20 ~ 85°C</li>
+                                <li><strong>Kết nối ren:</strong> G1/4"</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Dosing Pump -->
+                    <div class="device-card">
+                        <div class="device-image-placeholder">⚙️</div>
+                        <div class="device-content">
+                            <div class="device-title">Bơm định lượng</div>
+                            <div class="device-model">Model: DP-AUTO-500</div>
+                            <ul class="device-specs">
+                                <li><strong>Lưu lượng:</strong> Điều chỉnh 0-100%</li>
+                                <li><strong>Công suất:</strong> 45W</li>
+                                <li><strong>Điện áp:</strong> 220V AC</li>
+                                <li><strong>Vật liệu đầu bơm:</strong> PVDF chống ăn mòn</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

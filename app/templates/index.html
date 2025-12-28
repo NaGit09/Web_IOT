@@ -1,12 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hệ thống châm phân</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 </head>
+
 <body>
-    <h1>Index page </h1>
-    
+    <div class="background-container"></div>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Menu</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('web_bp.home') }}" class="nav-item active">
+                    <span>🏠</span> Trang chủ
+                </a>
+                <a href="{{ url_for('web_bp.data') }}" class="nav-item">
+                    <span>📊</span> Dữ liệu
+                </a>
+                <a href="{{ url_for('web_bp.history') }}" class="nav-item">
+                    <span>⏰</span> Lịch sử
+                </a>
+                <a href="{{ url_for('web_bp.device') }}" class="nav-item">
+                    <span>⚙️</span> Thiết bị
+                </a>
+                <a href="{{ url_for('web_bp.contact') }}" class="nav-item">
+                    <span>📞</span> Liên hệ
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="{{ url_for('web_bp.login') }}" class="nav-item logout">
+                    <span>🚪</span> Đăng xuất
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="dashboard-container">
+                <header class="dashboard-header">
+                    <h1>Hệ thống châm phân tự động</h1>
+                    <p>Sinh viên thực hiện : 22130015 - Trần Nhựt Anh , 22130025 - Nguyễn Hoàng Anh Tuấn</p>
+                </header>
+
+                <section class="section-valves">
+                    <h2 class="section-title">Trạng thái Van</h2>
+                    <div class="valves-grid">
+                        <div class="valve-card" id="valve-card-1">
+                            <h3>Van 1</h3>
+                            <div class="status-dot" id="led-1"></div>
+                        </div>
+                        <div class="valve-card" id="valve-card-2">
+                            <h3>Van 2</h3>
+                            <div class="status-dot" id="led-2"></div>
+                        </div>
+                        <div class="valve-card" id="valve-card-3">
+                            <h3>Van 3</h3>
+                            <div class="status-dot" id="led-3"></div>
+                        </div>
+                        <div class="valve-card" id="valve-card-4">
+                            <h3>Van 4</h3>
+                            <div class="status-dot" id="led-4"></div>
+                        </div>
+                        <div class="valve-card" id="valve-card-5">
+                            <h3>Van 5</h3>
+                            <div class="status-dot" id="led-5"></div>
+                        </div>
+                        <div class="valve-card" id="valve-card-6">
+                            <h3>Van 6</h3>
+                            <div class="status-dot" id="led-6"></div>
+                        </div>
+                        <div class="valve-card" id="valve-card-7">
+                            <h3>Van 7</h3>
+                            <div class="status-dot" id="led-7"></div>
+                        </div>
+                        <div class="valve-card" id="valve-card-8">
+                            <h3>Van 8</h3>
+                            <div class="status-dot" id="led-8"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section-sensors">
+                    <h2 class="section-title">Thông số cảm biến</h2>
+                    <div class="sensors-grid">
+                        <div class="sensor-card " id="LuuLuong">
+                            <h3>Lưu lượng </h3>
+                            <div class="sensor-value">
+                                <p>Lưu lượng 1: <span id="LuuLuong1">--</span></p>
+                                <p>Lưu lượng 2: <span id="LuuLuong2">--</span></p>
+                                <p>Lưu lượng tổng: <span id="LuuLuongTong">--</span></p>
+                            </div>
+                        </div>
+                        <div class="sensor-card">
+                            <h3>Áp suất</h3>
+                            <div class="sensor-value">
+                                <p>Áp suất: <span id="ApXuat">--</span></p>
+                            </div>
+                        </div>
+                        <div class="sensor-card">
+                            <h3>Độ dẫn điện (EC)</h3>
+                            <div class="sensor-value">
+                                <p>Nồng độ: <span id="EC">--</span></p>
+                            </div>
+                        </div>
+                        <div class="sensor-card">
+                            <h3>Độ pH</h3>
+                            <div class="sensor-value">
+                                <p>Nồng độ: <span id="PH">--</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Valve Settings Modal -->
+    <div id="valve-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Cài đặt Van</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="valve-form">
+                <div class="form-group">
+                    <label for="valve-mode">Chế độ</label>
+                    <div style="position: relative">
+                        <span style="
+                  position: absolute;
+                  left: 1rem;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  z-index: 1;
+                ">⚙️</span>
+                        <select id="valve-mode" class="form-control" style="padding-left: 3rem; appearance: none">
+                            <option value="auto">Tự động</option>
+                            <option value="manual">Thủ công</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="valve-timer">Thời gian tưới (phút)</label>
+                    <div style="position: relative">
+                        <span style="
+                  position: absolute;
+                  left: 1rem;
+                  top: 50%;
+                  transform: translateY(-50%);
+                ">⏱️</span>
+                        <input type="number" id="valve-timer" class="form-control" placeholder="60"
+                            style="padding-left: 3rem" min="1" />
+                    </div>
+                </div>
+                <input type="hidden" id="relay-id" value="">
+
+                <div class="form-group" id="manual-controls" style="display: none;">
+                    <label>Trạng thái van</label>
+                    <button type="button" id="toggle-valve-btn" class="btn-primary"
+                        style="background-color: var(--card-bg); border: 1px solid var(--glass-border); margin-bottom: 1rem;">
+                        Bật / Tắt
+                    </button>
+                </div>
+
+                <button type="submit" class="btn-primary">Lưu chế độ</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+        integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        var socket = io();
+        socket.on('connect', function () {
+            console.log('Socket connected');
+            socket.emit('message', { data: 'User connected!' });
+        });
+
+        socket.on('message', function (msg) {
+            console.log('Received message:', msg);
+        });
+
+        // Basic listener for relay status updates
+        socket.on('relay_status', function (data) {
+            console.log('Relay status update:', data);
+        });
+
+        socket.on('relay_status_all', function (data) {
+            console.log('All relays status:', data);
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
+
 </html>

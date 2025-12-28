@@ -1,0 +1,548 @@
+:root {
+  --primary-color: #818cf8; /* Indigo 400 - brighter for dark mode */
+  --primary-hover: #6366f1; /* Indigo 500 */
+  --secondary-color: #34d399; /* Emerald 400 */
+  --danger-color: #f87171; /* Red 400 */
+  --text-primary: #ffffff; /* Pure white */
+  --text-secondary: #e2e8f0; /* Slate 200 - much lighter than before */
+  --bg-dark: #020617; /* Slate 950 - darker base */
+  --glass-bg: rgba(15, 23, 42, 0.85); /* Much more opaque */
+  --glass-border: rgba(255, 255, 255, 0.15); /* stronger borders */
+  --card-bg: rgba(
+    30,
+    41,
+    59,
+    0.7
+  ); /* Lighter card bg for contrast against dark bg */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  color: var(--text-primary);
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-dark);
+}
+
+.background-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: url("../img/background.jpg") no-repeat center center;
+  background-size: cover;
+  filter: brightness(0.6) contrast(1.1); /* Adjusted brightness as requested */
+}
+
+/* --- Layout --- */
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  background: rgba(15, 23, 42, 0.6); /* Reduced opacity for more see-through */
+  backdrop-filter: blur(25px); /* Stronger blur */
+  -webkit-backdrop-filter: blur(25px);
+  border-right: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+/* ... existing styles ... */
+
+/* Glass effect for items */
+.valve-card,
+.sensor-card {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.sidebar-header {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.sidebar-header h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background: linear-gradient(to right, #fff, #94a3b8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  background: rgba(99, 102, 241, 0.1); /* Subtle primary tint */
+  color: #fff;
+}
+
+.nav-item.active {
+  background: rgba(99, 102, 241, 0.2);
+  border-left: 3px solid var(--primary-color);
+  border-radius: 0.25rem 0.75rem 0.75rem 0.25rem; /* Flat left edge */
+}
+
+.nav-item span {
+  font-size: 1.25rem;
+  min-width: 24px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+.nav-item.logout {
+  color: var(--danger-color);
+}
+
+.nav-item.logout:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* No scroll on main wrapper */
+  position: relative;
+}
+
+.dashboard-container {
+  height: 100%;
+  padding: 1.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow-y: auto; /* Scroll ONLY inside content if needed */
+}
+
+/* Header */
+.dashboard-header {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.5rem;
+}
+
+/* Sections */
+.section-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title::before {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 16px;
+  background: var(--primary-color);
+  border-radius: 2px;
+}
+
+/* Valves Grid */
+.section-valves {
+  flex-shrink: 0;
+}
+
+.valves-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Changed from 8 to 4 */
+  gap: 1rem;
+}
+
+.valve-card {
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 1rem; /* Slightly larger border radius */
+  padding: 1.5rem 1rem; /* Increased padding */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem; /* Increased gap */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  min-height: 120px; /* Force minimum height */
+}
+
+.valve-card:hover {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.valve-card h3 {
+  font-size: 1.1rem; /* Larger font */
+  font-weight: 500;
+  color: var(--text-secondary);
+  z-index: 1;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--danger-color);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+  transition: all 0.3s ease;
+  margin-top: 0.25rem;
+}
+
+.valve-card:active {
+  transform: scale(0.98);
+}
+
+/* Sensors Grid */
+.section-sensors {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Important for flex child with scrolling content */
+}
+
+/* Sensors Grid - Flexible Layout */
+.sensors-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  flex: 1;
+  align-content: flex-start; /* items stack efficiently */
+}
+
+/* Base sensor card flexibility */
+.sensor-card {
+  flex: 1 1 200px; /* Grow, shrink, base width */
+  min-width: 200px;
+  background: linear-gradient(
+    145deg,
+    rgba(30, 41, 59, 0.9),
+    rgba(15, 23, 42, 0.95)
+  );
+  border: 1px solid var(--glass-border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transition: all 0.3s ease;
+  min-height: 140px;
+}
+
+.sensor-card:hover {
+  border-color: var(--primary-color);
+}
+
+.sensor-card h3 {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+/* Unified Sensor Value Styles */
+.sensor-value {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.sensor-value p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  font-size: 0.95rem; /* Label size */
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03); /* Subtle separator */
+  padding-bottom: 0.25rem;
+}
+
+.sensor-value p:last-child {
+  border-bottom: none;
+}
+
+.sensor-value p span {
+  font-size: 1.35rem; /* Value size */
+  font-weight: 700;
+  color: var(--primary-color);
+  text-shadow: 0 0 10px rgba(99, 102, 241, 0.25);
+}
+
+/* Base styling for sensor cards Titles */
+.sensor-card h3 {
+  font-size: 1rem;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  width: 100%;
+  border-left: 3px solid var(--secondary-color);
+  padding-left: 0.5rem;
+}
+
+/* Specific sizing overrides only */
+#LuuLuong {
+  flex: 2 1 300px;
+  min-width: 300px;
+}
+
+.sensor-card.featured {
+  flex: 2 1 300px; /* Take double width if possible on same row */
+  background: linear-gradient(
+    135deg,
+    rgba(79, 70, 229, 0.3),
+    rgba(15, 23, 42, 0.95)
+  );
+  border: 1px solid rgba(129, 140, 248, 0.4);
+}
+
+.sensor-card.featured .sensor-value {
+  font-size: 2.75rem;
+  color: var(--primary-color);
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay:not(.hidden) {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: #1e293b;
+  border: 1px solid var(--glass-border);
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.modal-overlay:not(.hidden) .modal-content {
+  transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h2 {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  color: #fff;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.form-control {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid var(--glass-border);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.btn-primary {
+  width: 100%;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  padding: 0.875rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .app-container {
+    flex-direction: column;
+    overflow: auto;
+  }
+  .sidebar {
+    width: 100%;
+    padding: 1rem;
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sidebar-header {
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+  .sidebar-nav {
+    flex-direction: row;
+    flex-grow: 0;
+  }
+  .sidebar-footer {
+    display: none;
+  } /* Hide logout on mobile header or move it */
+  .valves-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .sensors-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+  }
+  .sensor-card.featured {
+    grid-column: span 2;
+  }
+  .dashboard-container {
+    overflow: visible;
+    height: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .valves-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .sensors-grid {
+    grid-template-columns: 1fr;
+  }
+  .sensor-card.featured {
+    grid-column: 1;
+  }
+  .sidebar {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .sidebar-nav {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+}

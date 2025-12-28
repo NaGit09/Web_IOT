@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liên hệ - Hệ thống châm phân</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <!-- Custom styling for contact page -->
+    <style>
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .contact-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .contact-info-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .contact-icon {
+            font-size: 1.5rem;
+            background: rgba(99, 102, 241, 0.2);
+            padding: 0.75rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+
+        .map-frame {
+            border: 0;
+            width: 100%;
+            height: 400px;
+            border-radius: 1rem;
+            filter: grayscale(1) invert(1) contrast(1.2) brightness(0.8);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-container"></div>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Menu</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('web_bp.home') }}" class="nav-item">
+                    <span>🏠</span> Trang chủ
+                </a>
+                <a href="{{ url_for('web_bp.data') }}" class="nav-item">
+                    <span>📊</span> Dữ liệu
+                </a>
+                <a href="{{ url_for('web_bp.history') }}" class="nav-item">
+                    <span>⏰</span> Lịch sử
+                </a>
+                <a href="{{ url_for('web_bp.device') }}" class="nav-item">
+                    <span>⚙️</span> Thiết bị
+                </a>
+                <a href="{{ url_for('web_bp.contact') }}" class="nav-item active">
+                    <span>📞</span> Liên hệ
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="{{ url_for('web_bp.login') }}" class="nav-item logout">
+                    <span>🚪</span> Đăng xuất
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="dashboard-container">
+                <header class="dashboard-header">
+                    <h1>Liên hệ hỗ trợ</h1>
+                </header>
+
+                <div class="contact-container">
+                    <div class="contact-card">
+                        <h2 class="section-title" style="margin: 0; margin-bottom: 1rem;">Thông tin liên hệ</h2>
+                        <div class="contact-info-item">
+                            <div class="contact-icon">🏢</div>
+                            <div>
+                                <strong>Trường đại học Nông Lâm thành phố Hồ Chí Minh</strong>
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <div class="contact-icon">📍</div>
+                            <span>Đường số 3, Linh Trung , Thủ Đức , TP.HCM</span>
+                        </div>
+                        <div class="contact-info-item">
+                            <div class="contact-icon">📞</div>
+                            <span>Hotline: 0905.123.456</span>
+                        </div>
+                        <div class="contact-info-item">
+                            <div class="contact-icon">✉️</div>
+                            <span>support@nonglam.edu.vn</span>
+                        </div>
+                        <div class="contact-info-item">
+                            <div class="contact-icon">🌐</div>
+                            <span>www.nonglam.edu.vn</span>
+                        </div>
+                    </div>
+
+                    <div class="card-bg"
+                        style="border-radius: 1rem; overflow: hidden; border: 1px solid var(--glass-border);">
+                        <!-- NLU Map -->
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.2324288146733!2d106.79165607481913!3d10.869918357464333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317527587e9ad5bf%3A0xafa66f978eb431b9!2zVHLGsOG7nW5nIMSQ4bqhaSBI4buMYyBOw7RuZyBMw6JtIFRwLiBI4buTIENow60gTWluaA!5e0!3m2!1svi!2s"
+                            class="map-frame" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

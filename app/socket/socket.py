@@ -30,7 +30,7 @@ class SocketMessage:
 
         try:
             # Lấy trạng thái hiện tại từ DB
-            current_state = HandleDB().get_relay_states_db().get(relay_id, "off")
+            current_state = HandleDB().get_relay_state_db(relay_id)
             new_state = "off" if current_state == "on" else "on"
 
             # 1. Ghi xuống PLC LOGO

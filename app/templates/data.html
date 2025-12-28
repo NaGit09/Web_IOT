@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dữ liệu - Hệ thống châm phân</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .data-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            max-height: 500px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(4px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            .tables-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #fff;
+        }
+
+        .filter-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            color-scheme: dark;
+        }
+
+        .filter-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            color: white;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            opacity: 0.9;
+        }
+
+        .filter-btn.reset {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-container"></div>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Menu</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('web_bp.home') }}" class="nav-item">
+                    <span>🏠</span> Trang chủ
+                </a>
+                <a href="{{ url_for('web_bp.data') }}" class="nav-item active">
+                    <span>📊</span> Dữ liệu
+                </a>
+                <a href="{{ url_for('web_bp.history') }}" class="nav-item">
+                    <span>⏰</span> Lịch sử
+                </a>
+                <a href="{{ url_for('web_bp.device') }}" class="nav-item">
+                    <span>⚙️</span> Thiết bị
+                </a>
+                <a href="{{ url_for('web_bp.contact') }}" class="nav-item">
+                    <span>📞</span> Liên hệ
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="{{ url_for('web_bp.login') }}" class="nav-item logout">
+                    <span>🚪</span> Đăng xuất
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="dashboard-container">
+                <header class="dashboard-header">
+                    <div>
+                        <h1>Dữ liệu cảm biến</h1>
+                    </div>
+                </header>
+
+                <div class="tables-grid">
+                    <!-- Flow 1 Table -->
+                    <div class="data-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span>🌊</span> Lưu lượng 1
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="flow1Table">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Giá trị (L/h)</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Flow 2 Table -->
+                    <div class="data-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span>🌊</span> Lưu lượng 2
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="flow2Table">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Giá trị (L/h)</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Pressure Table -->
+                    <div class="data-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span>⏲️</span> Áp suất
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="pressureTable">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Giá trị (Bar)</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- EC Table -->
+                    <div class="data-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span>⚡</span> EC
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="ecTable">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Giá trị (mS/cm)</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- pH Table -->
+                    <div class="data-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span>🧪</span> pH
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="phTable">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Giá trị</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Helper to Format Time
+            const formatTime = (isoString) => {
+                const date = new Date(isoString);
+                return date.toLocaleString('vi-VN', {
+                    year: 'numeric', month: '2-digit', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit'
+                });
+            };
+
+            const renderTable = (tableId, data) => {
+                const table = document.getElementById(tableId);
+                const thead = table.querySelector('thead');
+                const tbody = table.querySelector('tbody');
+
+                if (!tbody || !thead) return;
+
+                tbody.innerHTML = '';
+                thead.innerHTML = '';
+
+                if (data && data.length > 0) {
+                    // Create dynamic headers from first row keys
+                    const headers = Object.keys(data[0]);
+                    const trHead = document.createElement('tr');
+                    headers.forEach(key => {
+                        const th = document.createElement('th');
+                        let headerName = key;
+                        // Basic mapping
+                        if (key === 'ThoiGian') headerName = 'Thời gian';
+                        else if (key === 'TongLuuLuong') headerName = 'Tổng Lưu Lượng';
+                        else if (key === 'LuuLuongID') headerName = 'ID';
+                        else if (key === 'ApXuat') headerName = 'Áp Suất';
+
+                        th.textContent = headerName;
+                        trHead.appendChild(th);
+                    });
+                    thead.appendChild(trHead);
+
+                    // Create rows
+                    data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        headers.forEach(key => {
+                            const td = document.createElement('td');
+                            let value = row[key];
+                            if (key === 'ThoiGian') value = formatTime(value);
+                            td.textContent = value;
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    thead.innerHTML = '<tr><th>Thông báo</th></tr>';
+                    tbody.innerHTML = '<tr><td style="text-align:center">Không có dữ liệu</td></tr>';
+                }
+            };
+
+            // Fetch Data Function
+            let updateInterval;
+
+            const fetchData = () => {
+                // Fetch Flow 1
+                fetch(`/api/data_luu_luong?id=1`)
+                    .then(res => res.json())
+                    .then(data => renderTable('flow1Table', data))
+                    .catch(e => console.error('Flow 1 error:', e));
+
+                // Fetch Flow 2
+                fetch(`/api/data_luu_luong?id=2`)
+                    .then(res => res.json())
+                    .then(data => renderTable('flow2Table', data))
+                    .catch(e => console.error('Flow 2 error:', e));
+
+                // Fetch Pressure
+                fetch(`/api/data_apxuat`)
+                    .then(res => res.json())
+                    .then(data => renderTable('pressureTable', data))
+                    .catch(e => console.error('Pressure error:', e));
+
+                // Fetch EC
+                fetch(`/api/data_ec`)
+                    .then(res => res.json())
+                    .then(data => renderTable('ecTable', data))
+                    .catch(e => console.error('EC error:', e));
+
+                // Fetch pH
+                fetch(`/api/data_ph`)
+                    .then(res => res.json())
+                    .then(data => renderTable('phTable', data))
+                    .catch(e => console.error('pH error:', e));
+            };
+
+            // Initial Load & Periodic Update
+            fetchData();
+            updateInterval = setInterval(() => fetchData(), 5000); // 5 seconds
+        });
+    </script>
+</body>
+
+</html>
